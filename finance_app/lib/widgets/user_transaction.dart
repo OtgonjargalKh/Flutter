@@ -4,7 +4,7 @@ import './transactionlist.dart';
 
 class UserTransactions extends StatelessWidget {
   final List<Transaction> transaction;
-  final void Function(Transaction)? removed;
+  final void Function(String)? removed;
   const UserTransactions({
     super.key,
     required this.transaction,

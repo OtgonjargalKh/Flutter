@@ -1,0 +1,48 @@
+ Card(
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).primaryColor,
+                            width: 2,
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          "\$ : ${transaction[index].amount.toStringAsFixed(2)}",
+                          style: Theme.of(context).textTheme.displayLarge,
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            transaction[index].title,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            DateFormat.yMMMd().format(transaction[index].date),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                      FloatingActionButton(
+                        onPressed: () {
+                          removed!(transaction[index]);
+                        },
+                        tooltip: 'Increment',
+                        child: const Icon(Icons.delete),
+                      ),
+                    ],
+                  ),
+                );

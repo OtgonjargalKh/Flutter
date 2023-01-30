@@ -1,26 +1,51 @@
 import 'package:flutter/material.dart';
 
 class ChartItem extends StatelessWidget {
-  final String amount;
-  final String day;
+  final String label;
+  final double spendAmount;
+  final double spendPctof;
 
-  const ChartItem({super.key, required this.amount, required this.day});
+  const ChartItem(@required this.label, @required this.spendAmount,
+      @required this.spendPctof);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Container(
-          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          padding: const EdgeInsets.all(5),
-          child: Text(
-            "\$ : $amount",
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+          height: 20,
+          child: FittedBox(
+            child: Text('\$${spendAmount.toStringAsFixed(0)}'),
           ),
         ),
+        SizedBox(
+          height: 4,
+        ),
+        Container(
+          height: 60,
+          width: 10,
+          child: Stack(
+            children: <Widget>[
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey, width: 1),
+                  color: Color.fromRGBO(220, 220, 220, 1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              FractionallySizedBox(
+                heightFactor: spendPctof,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        Text(label),
       ],
     );
   }

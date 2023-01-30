@@ -1,4 +1,5 @@
 import 'package:finance_app/model/transaction.dart';
+import 'package:finance_app/widgets/chart_transaction.dart';
 import 'package:finance_app/widgets/new_transaction.dart';
 import 'package:finance_app/widgets/transactionlist.dart';
 import 'package:flutter/material.dart';
@@ -16,13 +17,19 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        errorColor: Colors.red,
         accentColor: Colors.amber,
         fontFamily: 'OpenSans',
         textTheme: const TextTheme(
           displayLarge: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20,
-            color: Colors.blue,
+            color: Colors.black,
+          ),
+          titleMedium: TextStyle(
+            fontWeight: FontWeight.w200,
+            fontSize: 18,
+            color: Colors.black,
           ),
         ),
         appBarTheme: AppBarTheme(
@@ -64,11 +71,21 @@ class _MyHomePageState extends State<MyHomePage> {
     // ),
   ];
 
-  void addTransaction(String title, double amount) {
+  List<Transaction> get _recentTransactions {
+    return userTransaction.where((tx) {
+      return tx.date.isAfter(
+        DateTime.now().subtract(
+          const Duration(days: 7),
+        ),
+      );
+    }).toList();
+  }
+
+  void addTransaction(String title, double amount, DateTime choosenDate) {
     final newItem = Transaction(
       id: DateTime.now().toString(),
       amount: amount,
-      date: DateTime.now(),
+      date: choosenDate,
       title: title,
     );
     setState(() {
@@ -86,45 +103,47 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
-  void rempoveTransaction(Transaction item) {
+  void removeTransaction(String id) {
     setState(() {
-      userTransaction.remove(item);
+      userTransaction.removeWhere((tx) => tx.id == id);
+      // userTransaction.remove(item);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      textTheme: Theme.of(context).appBarTheme.textTheme,
+      title: const Text("Flutter app"),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () => add(context),
+          icon: const Icon(Icons.add),
+        ),
+      ],
+    );
     return Scaffold(
-      appBar: AppBar(
-        textTheme: Theme.of(context).appBarTheme.textTheme,
-        title: const Text("Flutter app"),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () => add(context),
-            icon: const Icon(Icons.add),
-          ),
-        ],
-      ),
+      appBar: appBar,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          SizedBox(
-            width: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: const <Widget>[
-                Card(
-                  child: Text("Chart"),
-                  color: Colors.blue,
-                  elevation: 10,
-                ),
-              ],
-            ),
+          Container(
+            height: (MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).padding.top -
+                    appBar.preferredSize.height) *
+                0.28,
+            child: ChartTransaction(transaction: _recentTransactions),
           ),
-          TransactionList(
-            transaction: userTransaction,
-            removed: rempoveTransaction,
+          Container(
+            height: (MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).padding.top -
+                    appBar.preferredSize.height) *
+                0.7,
+            child: TransactionList(
+              transaction: userTransaction,
+              removed: removeTransaction,
+            ),
           ),
         ],
       ),
