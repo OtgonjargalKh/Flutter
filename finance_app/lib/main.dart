@@ -5,6 +5,12 @@ import 'package:finance_app/widgets/transactionlist.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  //Delgets ergehgui baih tohirgoo
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitDown,
+  //   DeviceOrientation.portraitUp,
+  // ]);
   runApp(const MyApp());
 }
 
@@ -16,10 +22,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
         errorColor: Colors.red,
-        accentColor: Colors.amber,
         fontFamily: 'OpenSans',
+        // textButtonTheme: TextButtonThemeData(
+        //     style: TextButton.styleFrom(
+        //         primary: Colors.red,
+        //         textStyle: const TextStyle(
+        //             fontSize: 24,
+        //             fontWeight: FontWeight.bold,
+        //             fontStyle: FontStyle.italic))),
         textTheme: const TextTheme(
           displayLarge: TextStyle(
             fontWeight: FontWeight.bold,
@@ -33,14 +44,29 @@ class MyApp extends StatelessWidget {
           ),
         ),
         appBarTheme: AppBarTheme(
-          textTheme: ThemeData.light().textTheme.copyWith(
-                titleLarge: TextStyle(
+          toolbarTextStyle: ThemeData.light()
+              .textTheme
+              .copyWith(
+                titleLarge: const TextStyle(
                   fontFamily: 'OpenSans',
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
-              ),
+              )
+              .bodyText2,
+          titleTextStyle: ThemeData.light()
+              .textTheme
+              .copyWith(
+                titleLarge: const TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+              .headline6,
         ),
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
+            .copyWith(secondary: Colors.amber),
       ),
       home: const MyHomePage(),
     );
@@ -110,8 +136,44 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  bool _showChart = false;
+  List<Widget> _buildLandscapeContent(Widget chart, Widget list) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("Харуулах"),
+          Switch(
+              value: _showChart,
+              onChanged: (value) {
+                setState(() {
+                  _showChart = value;
+                });
+              }),
+        ],
+      ),
+      _showChart ? chart : list
+    ];
+  }
+
+  List<Widget> _buildPortail(
+      MediaQueryData mediaQuery, AppBar appBar, double height, Widget list) {
+    return [
+      Container(
+        height: (mediaQuery.size.height -
+                mediaQuery.padding.top -
+                appBar.preferredSize.height) *
+            height,
+        child: ChartTransaction(transaction: _recentTransactions),
+      ),
+      list,
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final islanscape = mediaQuery.orientation == Orientation.landscape;
     final appBar = AppBar(
       textTheme: Theme.of(context).appBarTheme.textTheme,
       title: const Text("Flutter app"),
@@ -122,30 +184,38 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ],
     );
+
+    final list = Container(
+      height: (mediaQuery.size.height -
+              mediaQuery.padding.top -
+              appBar.preferredSize.height) *
+          0.7,
+      child: TransactionList(
+        transaction: userTransaction,
+        removed: removeTransaction,
+      ),
+    );
+
+    final chart = Container(
+      height: (mediaQuery.size.height -
+              mediaQuery.padding.top -
+              appBar.preferredSize.height) *
+          (islanscape ? 0.7 : 0.3),
+      child: ChartTransaction(transaction: _recentTransactions),
+    );
     return Scaffold(
       appBar: appBar,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Container(
-            height: (MediaQuery.of(context).size.height -
-                    MediaQuery.of(context).padding.top -
-                    appBar.preferredSize.height) *
-                0.28,
-            child: ChartTransaction(transaction: _recentTransactions),
-          ),
-          Container(
-            height: (MediaQuery.of(context).size.height -
-                    MediaQuery.of(context).padding.top -
-                    appBar.preferredSize.height) *
-                0.7,
-            child: TransactionList(
-              transaction: userTransaction,
-              removed: removeTransaction,
-            ),
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          //mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            if (islanscape) ..._buildLandscapeContent(chart, list),
+            if (!islanscape)
+              ..._buildPortail(
+                  mediaQuery, appBar, (islanscape ? 0.7 : 0.3), list),
+          ],
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(

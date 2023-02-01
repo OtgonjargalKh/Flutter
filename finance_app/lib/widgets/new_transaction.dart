@@ -52,55 +52,65 @@ class _NewTransactionState extends State<NewTransaction> {
   Widget build(BuildContext context) {
     return Card(
       elevation: 5,
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        child: Column(children: <Widget>[
-          TextField(
-            decoration: const InputDecoration(labelText: "Зарлага"),
-            controller: titleController,
-            onSubmitted: ((_) => _submiteData()),
-            style: Theme.of(context).textTheme.titleMedium,
-            // onChanged: (val) => titleInput = val,
-          ),
-          TextField(
-            decoration: const InputDecoration(labelText: "Дүн"),
-            controller: amountController,
-            keyboardType: TextInputType.number,
-            style: Theme.of(context).textTheme.titleMedium,
-            onSubmitted: ((_) => _submiteData()),
-            // onChanged: (val) => amountInput = val,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  _selectedDate == null
-                      ? "Ognoo songogdoogui"
-                      : 'Огноо : ${DateFormat.yMd().format(_selectedDate!)}',
-                ),
-              ),
-              TextButton(
-                onPressed: _presentPicker,
-                child: const Text(
-                  "Огноо сонгох",
-                  style: TextStyle(color: Colors.blue),
-                ),
-              )
-            ],
-          ),
-          Container(
-            alignment: Alignment.centerRight,
-            child: ElevatedButton(
-              onPressed: _submiteData,
-              child: const Text(
-                "Зарлага нэмэх",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
+      child: Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              top: 10,
+              left: 10,
+              right: 10,
+              bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
+            child: Column(children: <Widget>[
+              TextField(
+                decoration: const InputDecoration(labelText: "Зарлага"),
+                controller: titleController,
+                onSubmitted: ((_) => _submiteData()),
+                style: Theme.of(context).textTheme.titleMedium,
+                // onChanged: (val) => titleInput = val,
+              ),
+              TextField(
+                decoration: const InputDecoration(labelText: "Дүн"),
+                controller: amountController,
+                keyboardType: TextInputType.number,
+                style: Theme.of(context).textTheme.titleMedium,
+                onSubmitted: ((_) => _submiteData()),
+                // onChanged: (val) => amountInput = val,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _selectedDate == null
+                          ? "Ognoo songogdoogui"
+                          : 'Огноо : ${DateFormat.yMd().format(_selectedDate!)}',
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: _presentPicker,
+                    child: const Text(
+                      "Огноо сонгох",
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  )
+                ],
+              ),
+              Container(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(
+                  onPressed: _submiteData,
+                  child: const Text(
+                    "Зарлага нэмэх",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ]),
           ),
-        ]),
+        ),
       ),
     );
   }
