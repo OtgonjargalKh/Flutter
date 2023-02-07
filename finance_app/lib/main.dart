@@ -80,7 +80,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   // late String titleInput;
   final List<Transaction> userTransaction = [
     // Transaction(
@@ -96,6 +96,24 @@ class _MyHomePageState extends State<MyHomePage> {
     //   date: DateTime.now(),
     // ),
   ];
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  didChangeAppLifecycleState(AppLifecycleState state) {
+    print(state);
+  }
+
+  ///Listener -uudig ustgah
+  @override
+  dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   List<Transaction> get _recentTransactions {
     return userTransaction.where((tx) {
@@ -137,7 +155,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   bool _showChart = false;
-  List<Widget> _buildLandscapeContent(Widget chart, Widget list) {
+  List<Widget> _buildLandscapeContent(
+      MediaQueryData mediaQuery, AppBar appBar, double height, Widget list) {
     return [
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -152,7 +171,15 @@ class _MyHomePageState extends State<MyHomePage> {
               }),
         ],
       ),
-      _showChart ? chart : list
+      _showChart
+          ? Container(
+              height: (mediaQuery.size.height -
+                      mediaQuery.padding.top -
+                      appBar.preferredSize.height) *
+                  height,
+              child: ChartTransaction(transaction: _recentTransactions),
+            )
+          : list
     ];
   }
 
@@ -196,13 +223,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
-    final chart = Container(
-      height: (mediaQuery.size.height -
-              mediaQuery.padding.top -
-              appBar.preferredSize.height) *
-          (islanscape ? 0.7 : 0.3),
-      child: ChartTransaction(transaction: _recentTransactions),
-    );
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
@@ -210,7 +230,9 @@ class _MyHomePageState extends State<MyHomePage> {
           //mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            if (islanscape) ..._buildLandscapeContent(chart, list),
+            if (islanscape)
+              ..._buildLandscapeContent(
+                  mediaQuery, appBar, (islanscape ? 0.7 : 0.3), list),
             if (!islanscape)
               ..._buildPortail(
                   mediaQuery, appBar, (islanscape ? 0.7 : 0.3), list),

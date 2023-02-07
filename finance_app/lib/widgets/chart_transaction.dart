@@ -46,9 +46,11 @@ class ChartTransaction extends StatelessWidget {
             return Flexible(
               fit: FlexFit.tight,
               child: ChartItem(
-                tx['day'] as String,
-                tx['amount'] as double,
-                totalSpend == 0 ? 0 : (tx['amount'] as double) / totalSpend,
+                label: tx['day'] as String,
+                spendAmount: tx['amount'] as double,
+                spendPctof: (totalSpend == 0
+                    ? 0
+                    : (tx['amount'] as double) / totalSpend),
               ),
             );
           }).toList(),

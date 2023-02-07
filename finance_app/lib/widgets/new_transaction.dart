@@ -15,6 +15,22 @@ class _NewTransactionState extends State<NewTransaction> {
   final amountController = TextEditingController();
   DateTime? _selectedDate;
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(NewTransaction oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
+  ///Ustgagch func
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void _submiteData() {
     if (titleController.text.isEmpty ||
         amountController.text.isEmpty ||

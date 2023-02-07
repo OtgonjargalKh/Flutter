@@ -1,13 +1,23 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
-class ChartItem extends StatelessWidget {
+class ChartItem extends StatefulWidget {
   final String label;
   final double spendAmount;
   final double spendPctof;
 
-  const ChartItem(@required this.label, @required this.spendAmount,
-      @required this.spendPctof);
+  const ChartItem(
+      {super.key,
+      required this.label,
+      required this.spendAmount,
+      required this.spendPctof});
 
+  @override
+  State<ChartItem> createState() => _ChartItemState();
+}
+
+class _ChartItemState extends State<ChartItem> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (ztx, constrains) {
@@ -16,7 +26,7 @@ class ChartItem extends StatelessWidget {
           Container(
             height: constrains.maxHeight * 0.15,
             child: FittedBox(
-              child: Text('\$${spendAmount.toStringAsFixed(0)}'),
+              child: Text('\$${widget.spendAmount.toStringAsFixed(0)}'),
             ),
           ),
           SizedBox(
@@ -35,7 +45,7 @@ class ChartItem extends StatelessWidget {
                   ),
                 ),
                 FractionallySizedBox(
-                  heightFactor: spendPctof,
+                  heightFactor: widget.spendPctof,
                   child: Container(
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
@@ -49,7 +59,8 @@ class ChartItem extends StatelessWidget {
           SizedBox(
             height: constrains.maxHeight * 0.05,
           ),
-          Container(height: constrains.maxHeight * 0.15, child: Text(label)),
+          Container(
+              height: constrains.maxHeight * 0.15, child: Text(widget.label)),
         ],
       );
     });

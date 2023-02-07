@@ -10,8 +10,18 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return transaction.isEmpty
+    return (transaction.isEmpty)
         ? const NoDataFound()
-        : ListWithdraw(transaction, removed);
+        : ListView(
+            children: <Widget>[
+              ...transaction
+                  .map((e) => ListWithdraw(
+                        key: ValueKey(e.id),
+                        transaction: e,
+                        removed: removed,
+                      ))
+                  .toList(),
+            ],
+          );
   }
 }
